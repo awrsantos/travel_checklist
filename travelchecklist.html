@@ -51,13 +51,21 @@
     function toggleExpand(div, iconUp, iconDown) {
         div.classList.toggle("hide-mode");
         
-        if (div.checkVisibility()) {
+        if (div.className == 'hide-mode') {
+            iconUp.style.display = "none";
+            iconDown.style.display = "block";
+        } else {
+            iconUp.style.display = "block";
+            iconDown.style.display = "none";
+        }
+        
+        /*if (div.checkVisibility()) {
             iconUp.style.display = "block";
             iconDown.style.display = "none";
         } else {
             iconUp.style.display = "none";
             iconDown.style.display = "block";
-        }
+        }*/
     }
     
     function displayIconMode() {
@@ -260,10 +268,20 @@
     }
     
     .hide-mode {
-        display: none;
+        /*display: none;*/
+        height: 0;
         opacity: 0;
+        visibility: hidden;
+        /*
+        https://www.impressivewebs.com/animate-display-block-none/
+        https://www.google.com/search?client=firefox-b-d&q=transition+before+display+none
+        */
     }
-    
+    /*
+    #div_documentos, #div_eletronicos {
+        transition: all 2s ease-out;
+    }
+    */
     .light-mode {
         background-color: #FFF;
         color: #000;
@@ -321,13 +339,13 @@
     <body>
         <nav>
             <h1>Check-list de Viagem</h1>
-            <span class="material-symbols-outlined uncheck" id="uncheck_all">
+            <span class="material-symbols-outlined uncheck" id="uncheck_all" title="Desmarcar todos">
                 remove_selection
             </span>
-            <span class="material-symbols-outlined" id="toogle_mode_light" onclick="toggleMode(true);">
+            <span class="material-symbols-outlined" id="toogle_mode_light" onclick="toggleMode(true);" title="Tema claro">
                 light_mode
             </span>
-            <span class="material-symbols-outlined" id="toogle_mode_dark" onclick="toggleMode(true);">
+            <span class="material-symbols-outlined" id="toogle_mode_dark" onclick="toggleMode(true);" title="Tema escuro">
                 dark_mode
             </span>
         </nav>
