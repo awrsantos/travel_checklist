@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<script type="text/javascript">
+    let darkMode = localStorage.getItem('dark_mode');
+    if (darkMode === null) {
+        darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    } else {
+        darkMode = darkMode == 'S';
+    }
+    localStorage.setItem('dark_mode', darkMode ? 'S' : 'N');
+    
+    function getAllCheckedFromId(id, spanCount) {
+        var all = document.getElementById(id).querySelectorAll("input[type='checkbox']");
+        var checkeds = 0;
+        
+        all.forEach(function(checkbox) {
+            if (checkbox.checked) {
+                checkeds++;
+                localStorage.setItem(checkbox.name, 'S');
+            } else {
+                localStorage.setItem(checkbox.name, 'N');
+            }
+        });
+        
+        document.getElementById(spanCount).innerHTML = checkeds;
+    }
+    
+    function uncheckAll() {
+        document.querySelectorAll("input[type='checkbox']:checked").forEach(function(checkbox) {
+            checkbox.checked = false;
+            localStorage.setItem(checkbox.name, 'N');
+        });
+        
+        document.getElementById('count_mao').innerHTML = 0;
+        document.getElementById('count_despachada').innerHTML = 0;
+    }
+    
+    function toggleMode(changeDarkMode) {
+        var elements = [document.body, document.querySelector("nav"), document.querySelector("main")];
+        elements.forEach(function(e) {
+            e.classList.toggle("light-mode");
+        });
+        
+        if (changeDarkMode) {
+            darkMode = !darkMode;
+            localStorage.setItem('dark_mode', darkMode ? 'S' : 'N');
+        }
+        
+        displayIconMode();
+    }
+    
+    function toggleExpand(div, iconUp, iconDown) {
+        div.classList.toggle("hide-mode");
+        
+        if (div.className == 'hide-mode') {
+            iconUp.style.display = "none";
+            iconDown.style.display = "block";
+        } else {
+            iconUp.style.display = "block";
+            iconDown.style.display = "none";
+        }
+        
+        /*if (div.checkVisibility()) {
+            iconUp.style.display = "block";
+            iconDown.style.display = "none";
+        } else {
+            iconUp.style.display = "none";
+            iconDown.style.display = "block";
+        }*/
+    }
+    
+    function displayIconMode() {
+        if (darkMode) {
+            document.getElementById("toogle_mode_light").style.display = "block";
+            document.getElementById("toogle_mode_dark").style.display = "none";
+        } else {
+            document.getElementById("toogle_mode_light").style.display = "none";
+            document.getElementById("toogle_mode_dark").style.display = "block";
+        }
+    }
+    
+    window.onload = function() {
+        displayIconMode();
+        
+        document.querySelectorAll("input[type='checkbox']").forEach(function(checkbox) {
+            if (localStorage.getItem(checkbox.name) == 'S') {
+                document.getElementsByName(checkbox.name)[0].checked = true;
+            }
+        });
+        
+        document.getElementById("uncheck_all").addEventListener('click', function(e) {
+            uncheckAll();
+        });
+        
+        getAllCheckedFromId('mala_mao', 'count_mao');
+        getAllCheckedFromId('mala_despachada', 'count_despachada');
+        
+        document.getElementById('total_mao').innerHTML = document.getElementById('mala_mao').querySelectorAll("input[type='checkbox']").length;
+        document.getElementById('total_despachada').innerHTML = document.getElementById('mala_despachada').querySelectorAll("input[type='checkbox']").length;
+        
+        var collection = document.getElementsByClassName('circdown');
+        for (let i = 0; i < collection.length; i++) {
+            collection[i].style.display = "none";
+            
+            collection[i].previousElementSibling.addEventListener('click', function(e) {
+                toggleExpand(collection[i].parentElement.nextElementSibling, collection[i].previousElementSibling, collection[i]);
+            });
+            
+            collection[i].addEventListener('click', function(e) {
+                toggleExpand(collection[i].parentElement.nextElementSibling, collection[i].previousElementSibling, collection[i]);
+            });
+        }
+    }
+</script>
+<style type="text/css">
+    :root {
+        --check-color: #FFF;
+    }
+    
+    html, body {
+        background-color: #44514E;
+        border: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 100%;
+        font-weight: normal;
+        height: 100%;
+        line-height: 1;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+        color: #FFF;
+        display: table;
+        table-layout: fixed;
+        width: 100%;
+    }
+    
+    nav {
+        background-color: #191919;
+        border-radius: 0 0 .5em .5em;
+        box-shadow: 0 0 .5em #000;
+        height: 4.1em;
+        margin: 0 1em;
+        position: fixed;
+        width: calc(100% - 2em);
+        z-index: 1;
+    }
+    
+    nav h1 {
+        font-size: 1.625em;
+        text-align: center;
+        text-transform: uppercase;
+    }
+    
+    nav span {
+        cursor: pointer;
+        margin-top: -1.5em;
+    }
+    
+    nav span:nth-child(2) {
+        float: left;
+        padding-left: 0.86em;
+    }
+    
+    nav span:nth-child(n+3) {
+        float: right;
+        padding-right: 0.86em;
+    }
+    
+    main {
+        background-color: #252525;
+        border-radius: .5em;
+        display: grid;
+        grid-template-columns: 49.95% 0.1% 49.95%;
+        margin: 0 1em 6em;
+        padding-bottom: 20px;
+        position: relative;
+        top: 5em;
+    }
+    
+    main > div:first-child {
+        padding: 0 0 0 1em;
+    }
+    
+    main > div:nth-child(2) {
+        border-left: #FFF solid 0.0125em;
+        margin-left: -0.7em;
+        margin-top: 0.9em;
+    }
+    
+    main h2 {
+        background-color: #10699F;
+        margin: 1em 1em 1em 0;
+        padding: 0.5em 0px 0.5em 0.3em;
+    }
+    
+    main h3 {
+        background-color: #696969;
+        margin: 1em 1.3em 1em 0;
+        padding: 0.5em 0px 0.5em 0.3em;
+    }
+    
+    main h3 span {
+        cursor: pointer;
+        float: right;
+        font-size: 1.125em !important;
+        margin-right: 0.2em;
+    }
+    
+    li a {
+        color: #FFF;
+        text-decoration: none;
+    }
+    
+    /*
+    Reference code for custom checkbox:
+    https://moderncss.dev/pure-css-custom-checkbox-style/
+    */
+    input[type="checkbox"] {
+        appearance: none;
+        background-color: #10699F;
+        cursor: pointer;
+        margin: 0;
+        /*border: 0.15em solid currentColor;*/
+        border-radius: 0.15em;
+        color: currentColor;
+        display: grid;
+        font: inherit;
+        height: 1.15em;
+        margin: 0;
+        place-content: center;
+        transform: translateY(-0.075em);
+        width: 1.15em;
+        -webkit-appearance: none;
+    }
+    
+    input[type="checkbox"]::before {
+        box-shadow: inset 1em 1em var(--check-color);
+        clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        content: "";
+        height: 0.8em;
+        transform: scale(0);
+        transition: 120ms transform ease-in-out;
+        width: 0.8em;
+        transform-origin: bottom left;
+    }
+    
+    input[type="checkbox"]:checked::before {
+        transform: scale(1);
+    }
+    
+    .checklist {
+        display: grid;
+        gap: 0.5em;
+        grid-template-columns: 1em auto;
+        line-height: 1.5em;
+        list-style: none;
+        padding-left: 0.5em;
+        width: max-content;
+    }
+    
+    .checklist span {
+        cursor: pointer;
+        padding-left: 5px;
+        position: relative;
+        top: -0.225em;
+    }
+    
+    .hide-mode {
+        /*display: none;*/
+        height: 0;
+        opacity: 0;
+        visibility: hidden;
+        /*
+        https://www.impressivewebs.com/animate-display-block-none/
+        https://www.google.com/search?client=firefox-b-d&q=transition+before+display+none
+        */
+    }
+    
+    /*#div_documentos, #div_eletronicos {
+        transition: all 2s ease-out;
+    }*/
+    
+    .light-mode {
+        background-color: #FFF;
+        color: #000;
+    }
+    
+    .light-mode > div:nth-child(2) {
+        border-left: #000 solid 0.15em;
+    }
+    
+    @media only screen and (max-width: 1200px) {
+        nav {
+            height: 8em;
+            margin: 0 1em 0 2em;
+            width: calc(100% - 4em);
+        }
+        
+        nav h1 {
+            font-size: 2.625em;
+            padding-top: 0.3em;
+        }
+        
+        nav span:nth-child(n+2) {
+            font-size: 2.5em !important;
+            margin-top: -1.225em;
+        }
+        
+        nav span:nth-child(2) {
+            padding-left: 1.16em;
+        }
+        
+        nav span:nth-child(n+3) {
+            padding-right: 1.16em;
+        }
+        
+        main {
+            font-size: xx-large;
+            grid-template-columns: 100%;
+        }
+        
+        main > div {
+            padding: 0 0 0 1em;
+        }
+        
+        main > div:nth-child(2) {
+            display: none;
+        }
+    }
+</style>
+<html lang="pt-br">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <head>
+        <title>Check-List de Viagem</title>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <nav>
+            <h1>Check-list de Viagem</h1>
+            <span class="material-symbols-outlined uncheck" id="uncheck_all" title="Desmarcar todos">
+                remove_selection
+            </span>
+            <span class="material-symbols-outlined" id="toogle_mode_light" onclick="toggleMode(true);" title="Tema claro">
+                light_mode
+            </span>
+            <span class="material-symbols-outlined" id="toogle_mode_dark" onclick="toggleMode(true);" title="Tema escuro">
+                dark_mode
+            </span>
+        </nav>
+        <main>
+            <div id="mala_mao">
+                <div>
+                    <h2>Mala de Mão
+                        <em>
+                            -
+                            <span id="count_mao">0</span>
+                            de
+                            <span id="total_mao"></span>
+                        </em>
+                    </h2>
+                    <label class="checklist">
+                        <input type="checkbox" name="mala_bordo" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                        <span>Mala de Bordo</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="porta_documentos" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                        <span>Porta Documentos</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="porta_passaporte" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                        <span>Porta Passaporte</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="celular" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                        <span>Celular</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="chip_internacional" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                        <span>Chip Internacional</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="lentes_contato" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                        <span>Lentes de Contato</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="oculos_grau" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                        <span>Óculos de Grau</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="oculos_sol" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                        <span>Óculos de Sol</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="snack" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                        <span>Snacks/Barra de Cereal</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="protetor_ouvido" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                        <span>Protetor de Ouvido</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="mascara" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                        <span>Máscara de Dormir</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="almofada" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                        <span>Almofada de Pescoço</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="balanca" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                        <span>Balança para Mala</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="papel_caneta" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                        <span>Papel/Caneta</span>
+                    </label>
+                </div>
+                <div>
+                    <h3>
+                        Documentos
+                        <span class="material-symbols-outlined circup">
+                            expand_circle_up
+                        </span>
+                        <span class="material-symbols-outlined circdown">
+                            expand_circle_down
+                        </span>
+                    </h3>
+                    <div id="div_documentos">
+                        <label class="checklist">
+                            <input type="checkbox" name="passaporte" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Passaporte</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="documento" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Documento de Identificação (RG/RNE)</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="cnh" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Carteira de Motorista</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="doc_menores" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Documento para Menores (Autorização de Viagem)</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="vacinacao" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Certificado de Vacinação</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="passagem_aerea" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Passagem Aérea</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="hotel" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Reserva do Hotel</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="seguro_viagem" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Seguro Viagem</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="ingressos" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Ingressos</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="carro" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Aluguel de Carro</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="cash" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Dinheiro/Moeda Local</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="cartao_credito" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Cartão de Crédito</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="cartao_pre" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Cartão Pré-Pago (Travel Card)</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="cartao_fidelidade" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Cartões de Fidelidade</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="cartao_saude" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Cartão Seguro Saúde</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="estudante" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Carteirinha de Estudante Internacional</span>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <h3>
+                        Eletrônicos
+                        <span class="material-symbols-outlined circup">
+                            expand_circle_up
+                        </span>
+                        <span class="material-symbols-outlined circdown">
+                            expand_circle_down
+                        </span>
+                    </h3>
+                    <div id="div_eletronicos">
+                        <label class="checklist">
+                            <input type="checkbox" name="adaptador" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Adaptador Universal</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="bateria" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Power Bank</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="pilha" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Pilhas</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="camera" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Câmera</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="cartao_memoria" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Cartão de Memória</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="carregador" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Carregador de Celular</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="fone" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Fone de Ouvido</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="tablet" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Tablet</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="gps" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>GPS</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="lanterna" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Lanterna</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="notebook" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Notebook</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="pendrive" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Pendrive</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="chromecast" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Chromecast</span>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <h3>
+                        Medicamentos
+                        <span class="material-symbols-outlined circup">
+                            expand_circle_up
+                        </span>
+                        <span class="material-symbols-outlined circdown">
+                            expand_circle_down
+                        </span>
+                    </h3>
+                    <div id="div_medicamentos">
+                        <label class="checklist">
+                            <input type="checkbox" name="uso_cont" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Uso Contínuo</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="dor_cabeca" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Dor de Cabeça</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="enjoo" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Enjôo</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="gripe" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Gripe/Resfriado</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="alergia" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Alergia</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="azia" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Azia</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="curativo" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Curativos</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="dor" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Dores Musculares</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="pastilha" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Pastilha para Garganta</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="antigas" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Antigases</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="anticoncep" onclick="javascript:getAllCheckedFromId('mala_mao', 'count_mao');">
+                            <span>Anticoncepcional</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div></div>
+            <div id="mala_despachada">
+                <div>
+                    <h2>Mala para Despachar
+                        <em>
+                            -
+                            <span id="count_despachada">0</span>
+                            de
+                            <span id="total_despachada"></span>
+                        </em>
+                    </h2>
+                    <label class="checklist">
+                        <input type="checkbox" name="mala_viagem" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Mala de Viagem</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="mochila" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Mochila</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="bolsa" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Bolsa</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="id_mala" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Identificador de Mala</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="cadeado" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Cadeado</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="organizador" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Organizador de Mala</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="frasco" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Frasqueira</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="necessaire" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Necessaire</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="calca" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Calças</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="camiseta" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Camisetas</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="casaco" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Casacos</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="calcado" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Calçados</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="meia" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Meias</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="vestido" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Vestidos</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="saia" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Saias</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="roupa_intima" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Roupas Íntimas</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="pijama" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Pijama</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="roupa_banho" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Roupas de Banho</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="saco_sujo" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Sacos para Roupas Sujas</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="bone" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Boné</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="chapeu" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Chapéu</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="gorro" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Gorro</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="luva" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Luvas</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="cinto" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Cinto</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="guarda_chuva" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Guarda-Chuva</span>
+                    </label>
+                    <label class="checklist">
+                        <input type="checkbox" name="capa_chuva" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                        <span>Capa de Chuva</span>
+                    </label>
+                </div>
+                <div>
+                    <h3>
+                        Higiene Pessoal
+                        <span class="material-symbols-outlined circup">
+                            expand_circle_up
+                        </span>
+                        <span class="material-symbols-outlined circdown">
+                            expand_circle_down
+                        </span>
+                    </h3>
+                    <div id="div_higiene_pessoal">
+                        <label class="checklist">
+                            <input type="checkbox" name="desodorante" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Desodorante</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="escova_dente" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Escova de Dentes</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="pasta_dente" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Creme Dental</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="fio_dental" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Fio Dental</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="enxaguante" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Enxaguante Bucal</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="pente" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Pente / Escova</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="sabonete" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Sabonete</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="shampoo" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Shampoo</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="condicionador" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Condicionador</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="protetor" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Protetor Solar</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="hidratante" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Creme Hidratante</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="labial" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Hidratante Labial</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="lenco_umidecido" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Lenço Umidecido</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="repelente" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Repelente</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="lixa_unha" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Lixa de Unha</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="alicate_unha" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Alicate de Unha</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="pinca" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Pinça</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="depilador" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Depilador</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="lavador_nasal" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Lavador Nasal</span>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <h3>
+                        Para Mulheres
+                        <span class="material-symbols-outlined circup">
+                            expand_circle_up
+                        </span>
+                        <span class="material-symbols-outlined circdown">
+                            expand_circle_down
+                        </span>
+                    </h3>
+                    <div id="div_mulheres">
+                        <label class="checklist">
+                            <input type="checkbox" name="absorvente" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Absorventes</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="base" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Base</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="po" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Pó</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="corretivo" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Corretivo</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="gloss" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Gloss</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="lapis" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Lápis</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="rimel" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Rimel</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="escova_cabelo" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Escova de Cabelo</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="removedor_maquiagem" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Removedor de Maquiagem</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="lenco_removedor" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Lenço Removedor</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="curvex" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Curvex</span>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <h3>
+                        Para Homens
+                        <span class="material-symbols-outlined circup">
+                            expand_circle_up
+                        </span>
+                        <span class="material-symbols-outlined circdown">
+                            expand_circle_down
+                        </span>
+                    </h3>
+                    <div id="div_homens">
+                        <label class="checklist">
+                            <input type="checkbox" name="creme_barbear" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Creme de Barbear</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="barbeador" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Barbeador</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="locao_barba" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Loção pós Barba</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="gel_cabelo" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Gel para Cabelo</span>
+                        </label>
+                        <label class="checklist">
+                            <input type="checkbox" name="oleo_barba" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Óleo/Balm para Barba</span>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <h3>
+                        Mantimentos
+                        <span class="material-symbols-outlined circup">
+                            expand_circle_up
+                        </span>
+                        <span class="material-symbols-outlined circdown">
+                            expand_circle_down
+                        </span>
+                    </h3>
+                    <div id="div_mantimentos">
+                        <label class="checklist">
+                            <input type="checkbox" name="cafe" onclick="javascript:getAllCheckedFromId('mala_despachada', 'count_despachada');">
+                            <span>Café</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>
+<script type="text/javascript">
+    if (!darkMode) {
+        toggleMode(false);
+    }
+</script>
